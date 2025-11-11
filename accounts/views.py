@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
 from .serializers import RegisterSerializer, LoginSerializer, UserSerializer
+from rest_framework import status
 
 
 class RegisterView(generics.CreateAPIView):
@@ -48,7 +49,8 @@ class LoginView(generics.GenericAPIView):
             )
 
             return response
-        return Response({"error": "Invalid credentials"}, status=400)
+        
+        return Response({"error": "Invalid credentials"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class MeView(generics.RetrieveAPIView):
@@ -62,8 +64,9 @@ class LogoutView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        response = Response({"message": "Logged out successfully"}, status=200)
+        response = Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
         response.delete_cookie("access")
         response.delete_cookie("refresh")
+        
         return response
     
